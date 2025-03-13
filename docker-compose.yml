@@ -1,0 +1,9 @@
+services:
+  db:
+    container_name: 'app_postgres'
+    image: 'postgres:latest'
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'

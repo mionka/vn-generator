@@ -1,0 +1,121 @@
+[tool.poetry]
+name = "app"
+packages = [{ include = "app", from = "src"}]
+version = "0.1.0"
+description = ""
+authors = ["mionka <glazachevanna@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.12.8"
+alembic = "^1.14.0"
+asyncpg = "^0.30.0"
+fastapi = "^0.115.6"
+fastapi-pagination = "^0.12.30"
+psycopg2-binary = "^2.9.3"
+pydantic = {extras=["dotenv", "email"], version="^2.0"}
+pydantic-settings = "^2.7.1"
+python-multipart = "^0.0.20"
+SQLAlchemy = "^2.0.37"
+SQLAlchemy-Utils = "^0.41.2"
+uvicorn = "^0.34.0"
+
+[tool.poetry.dev-dependencies]
+autoflake = "^2.3"
+black = "^24.10.0"
+httpx = "^0.28.0"
+isort = "^5.13.2"
+mypy = "^1.14.1"
+pylint = "^3.3.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest]
+python_files = "test_*.py"
+python_classes = ["*Test", "Test*"]
+python_functions = "test_*"
+testpaths = "tests/"
+
+[tool.coverage.report]
+exclude_lines = [
+    "# pragma: no cover",
+    "def __repr__",
+    "def __str__",
+    "def __unicode__",
+]
+show_missing = true
+skip_empty = true
+omit = [
+  "*/__init__.py",
+  "src/app/db/migration/env.py",
+]
+
+[tool.coverage.html]
+directory = "pytest-cov-report"
+
+[tool.coverage.run]
+branch = true
+concurrency = ['thread', 'greenlet']
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[tool.pylint.master]
+extension-pkg-allow-list = ["pydantic"]
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.basic]
+good-names = ["db", "POSTGRES_DB"]
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+  "C0114",  # missing-module-docstring
+  "C0116",  # missing-function-docstring
+  "R0903",  # too-few-public-methods (for sqlalchemy tables and pydantic classes)
+  "C0115",  # missing-class-docstring (for api routes)
+]
+
+[tool.pylint."tests"]
+disable = [
+  "R0913",  # too-many-arguments
+  "R0917",  # too-many-positional-arguments
+]
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+ignore_missing_imports = false
+no_implicit_optional = true
+plugins = ["sqlalchemy.ext.mypy.plugin"]
+
+[tool.black]
+line-length = 120
+target-version = ['py310']
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+)
+'''
+
+[tool.isort]
+known_local_folder = "app"
+lines_after_imports = 2
+multi_line_output = 3
+line_length = 120
+include_trailing_comma = true

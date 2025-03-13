@@ -1,0 +1,31 @@
+name: Validation
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: check service with pylint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5.2.0
+        with:
+          python-version: '3.12.8'
+          cache: 'pip'
+
+      - name: Install poetry
+        run: python3.12 -m pip install poetry
+      
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Check pylint
+        if: ${{ always() }}
+        run: poetry run pylint src/app
