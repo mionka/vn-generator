@@ -25,7 +25,7 @@ api_router = APIRouter(
 async def sync_user(
     current_user: dict = Depends(get_firebase_user_from_token),
     user_service: UserService = Depends(),
-):
+) -> UserResponse:
     """Synchronizes the user data based on the Firebase information."""
     user = await user_service.sync_user(current_user)
     return UserResponse.model_validate(user)
@@ -47,7 +47,7 @@ async def sync_user(
 async def get_current_user(
     current_user: dict = Depends(get_firebase_user_from_token),
     user_service: UserService = Depends(),
-):
+) -> UserResponse:
     """Retrieves current user information."""
     user = await user_service.get_user_by_uid(current_user["uid"])
     if not user:
