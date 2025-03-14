@@ -1,13 +1,6 @@
-# FastAPI Template
-A FastAPI project template with database integration.
+# Visual Nover Generator
+Web-service that allows to generate RenPy visual novels.
 
-## 🚀 Features
-
-- **FastAPI** for high-performance API development
-- **SQLAlchemy & Alembic** for database management and migrations
-- **Pydantic** for data validation
-- **Poetry** for dependency management
-- **Docker & Docker Compose** for containerized deployment
 
 
 ## Installation & Setup
@@ -35,24 +28,27 @@ poetry shell
 
 ### Running the application
 
-0. Create a `.env` file with the following variables (or use `make env` command)
+0. Download Firebase service account key and add this file to the project.
+
+1. Create a `.env` file with the following variables (or use `make env` command)
 ```dotenv
 POSTGRES_DB=...
 POSTGRES_USER=...
 POSTGRES_PASSWORD=...
 POSTGRES_HOST=...
 POSTGRES_PORT=5432
+GOOGLE_APPLICATION_CREDENTIALS=...
 ```
 
-1. Start the database in a Docker container
+2. Start the database in a Docker container
 ```commandline
 make db
 ```
-2. Apply database migrations
+3. Apply database migrations
 ```commandline
 make migrate head
 ```
-3. Run the application
+4. Run the application
 ```commandline
 make run
 ```
@@ -77,6 +73,41 @@ make format
 - Create a new migration revision
 ```commandline
 make revision message="..."
+```
+
+
+## Manual Testing
+
+### Authorizing
+
+1. Obtain the id token:
+
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "testuser@example.com",
+    "password": "your_password",
+    "returnSecureToken": true
+  }' \
+  "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=YOUR_API_KEY"
+```
+
+Copy 'idToken' field from the response.
+
+2. Authorize in the app using id_token:
+
+Add obtained id_token to Authorization header in this format: ```'Bearer YOUR_ID_TOKEN'```.
+If you test in Swagger, click Authorize and enter the id_token.
+
+### Testing run_game endpoints
+
+The run_game endpoints are not currently protected by authentication. This is intentional because these endpoints are designed to be accessed via a browser (e.g., for running the game in a client-side application), rather than through an API client like Postman or Swagger.
+
+To test them, call them in your browser:
+
+```
+http://127.0.0.1:8080/api/v1/run_game/GAME_ID/
 ```
 
 ## 📖 API Documentation
