@@ -20,14 +20,10 @@ def get_firebase_user_from_token(
     token: HTTPAuthorizationCredentials | None = Depends(get_settings().BEARER_SCHEME),
 ) -> dict[str, Any] | None:
     """Verifies Firebase ID token and returns the authenticated user details."""
-    print("lalala 1")
     try:
         if not token:
-            print("lalala no token")
             raise ValueError("Token is missing.")
-        print("lalala yes token", token.credentials)
         user = verify_id_token(token.credentials)
-        print("lalala token verified")
         return user
     except Exception as exc:
         raise HTTPException(

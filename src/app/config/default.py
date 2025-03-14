@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from fastapi.security import HTTPBearer
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -18,6 +20,9 @@ class DefaultSettings(BaseSettings):
 
     GOOGLE_APPLICATION_CREDENTIALS: str = ""
     BEARER_SCHEME: HTTPBearer = HTTPBearer()
+
+    GAME_PATH: Path = Path("games")
+    TEMPLATE_PATH: Path = Path(f"{GAME_PATH}/capy-web")
 
     @property
     def database_settings(self) -> dict:
