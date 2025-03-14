@@ -1,3 +1,4 @@
+from fastapi.security import HTTPBearer
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -14,6 +15,9 @@ class DefaultSettings(BaseSettings):
     POSTGRES_PASSWORD: str = "1234"
     DB_CONNECT_RETRY: int = 20
     DB_POOL_SIZE: int = 15
+
+    GOOGLE_APPLICATION_CREDENTIALS: str = ""
+    BEARER_SCHEME: HTTPBearer = HTTPBearer()
 
     @property
     def database_settings(self) -> dict:
