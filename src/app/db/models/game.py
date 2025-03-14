@@ -1,11 +1,10 @@
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy.dialects.postgresql import TEXT, UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, relationship
 
-from sqlalchemy.orm import Mapped
 from .base import BaseTable
-from .user import User
 from .mixins import TimestampMixin, UUIDMixin
+from .user import User
 
 
 class Game(UUIDMixin, TimestampMixin, BaseTable):

@@ -10,7 +10,7 @@ from app.config.utils import get_settings
 from app.db.models import Game
 from app.repositories import GameRepository, UserRepository
 from app.schemas import GameCreate
-from app.utils import get_session, NotFoundError
+from app.utils import NotFoundError, get_session
 
 
 class GameService:
@@ -43,6 +43,14 @@ class GameService:
             await self.game_repository.delete_game(game.id)
             raise
         return game
+
+    def get_game_filepath(self, game_id: UUID, filename: str) -> Path:
+        settings = get_settings()
+        return settings.GAME_PATH / str(game_id) / filename
+
+    def game_file_exists(self, game_id: UUID, filename: str) -> bool:
+        filepath = self.get_game_filepath(game_id, filename)
+        return filepath.exists() and filepath.is_file()
 
     def _create_game_files(self, game_dir: Path, template_dir: Path) -> None:
         if not template_dir.exists():

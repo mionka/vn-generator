@@ -6,7 +6,7 @@ from starlette import status
 
 from app.schemas import GameCreate, GameResponse
 from app.services import GameService
-from app.utils import get_firebase_user_from_token, NotFoundError
+from app.utils import NotFoundError, get_firebase_user_from_token
 
 
 api_router = APIRouter(
