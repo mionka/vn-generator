@@ -6,6 +6,7 @@ from app.config.default import DefaultSettings
 
 @lru_cache
 def get_settings() -> DefaultSettings:
+    """Retrieves settings based on the 'ENV' variable."""
     env = environ.get("ENV", "local")
     if env == "local":
         return DefaultSettings()

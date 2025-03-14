@@ -17,6 +17,7 @@ api_router = APIRouter(
     status_code=status.HTTP_200_OK,
 )
 async def ping_application() -> MessageSuccess:
+    """Checks if the application is working."""
     return MessageSuccess(message="Application works!")
 
 
@@ -33,6 +34,7 @@ async def ping_application() -> MessageSuccess:
 async def ping_database(
     health_service: HealthCheckService = Depends(),
 ) -> MessageSuccess:
+    """Checks if the database is reachable and working."""
     if await health_service.check_database():
         return MessageSuccess(message="Database works!")
     raise HTTPException(

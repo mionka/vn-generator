@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from fastapi_pagination import add_pagination
+from firebase_admin import credentials, initialize_app
 from uvicorn import run
 
 from app.api import list_of_routes
@@ -38,8 +38,9 @@ def get_app() -> FastAPI:
     )
     settings = get_settings()
     bind_routes(application, settings)
-    add_pagination(application)
     application.state.settings = settings
+    cred = credentials.Certificate(settings.GOOGLE_APPLICATION_CREDENTIALS)
+    initialize_app(cred)
     return application
 
 
