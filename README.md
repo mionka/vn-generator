@@ -1,8 +1,6 @@
 # Visual Nover Generator
 Web-service that allows to generate RenPy visual novels.
 
-
-
 ## Installation & Setup
 
 ### Requirements
