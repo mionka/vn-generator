@@ -4,7 +4,8 @@ from uvicorn import run
 
 from app.api import list_of_routes
 from app.config import DefaultSettings, get_settings
-from app.utils import get_hostname
+from app.middlewares import list_of_middlewares
+from app.utils import exception_handlers, get_hostname
 
 
 def bind_routes(application: FastAPI, setting: DefaultSettings) -> None:
@@ -13,6 +14,16 @@ def bind_routes(application: FastAPI, setting: DefaultSettings) -> None:
     """
     for route in list_of_routes:
         application.include_router(route, prefix=setting.PATH_PREFIX)
+
+
+def add_exception_handlers(application: FastAPI) -> None:
+    for exception, handler in exception_handlers:
+        application.add_exception_handler(exception, handler)
+
+
+def add_middlewared(application: FastAPI) -> None:
+    for middleware in list_of_middlewares:
+        application.add_middleware(middleware)
 
 
 def get_app() -> FastAPI:
@@ -38,6 +49,8 @@ def get_app() -> FastAPI:
     )
     settings = get_settings()
     bind_routes(application, settings)
+    add_exception_handlers(application)
+    add_middlewared(application)
     application.state.settings = settings
     cred = credentials.Certificate(settings.GOOGLE_APPLICATION_CREDENTIALS)
     initialize_app(cred)

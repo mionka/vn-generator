@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from starlette import status
 
 from app.schemas import UserResponse
@@ -40,7 +40,7 @@ async def sync_user(
             "description": "Could not validate credentials.",
         },
         status.HTTP_404_NOT_FOUND: {
-            "description": "User not found.",
+            "description": "Requested resource not found.",
         },
     },
 )
@@ -50,6 +50,4 @@ async def get_current_user(
 ) -> UserResponse:
     """Retrieves current user information."""
     user = await user_service.get_user_by_uid(current_user["uid"])
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
     return UserResponse.model_validate(user)

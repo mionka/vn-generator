@@ -20,9 +20,11 @@ class GameService:
         self.game_repository = GameRepository(session)
         self.user_repository = UserRepository(session)
 
-    async def check_game_exists(self, game_id: UUID) -> bool:
+    async def get_game(self, game_id: UUID) -> Game:
         game = await self.game_repository.get_game_by_id(game_id)
-        return game is not None
+        if not game:
+            raise NotFoundError("Game")
+        return game
 
     async def get_all_games(self) -> Sequence[Game]:
         return await self.game_repository.get_all_games()
@@ -32,7 +34,7 @@ class GameService:
 
         author = await self.user_repository.get_user_by_uid(author_uid)
         if not author:
-            raise NotFoundError("Author not found.")
+            raise NotFoundError("Author")
 
         game = await self.game_repository.create_game(game_info, author.id)
         game.author = author
@@ -44,17 +46,16 @@ class GameService:
             raise
         return game
 
-    def get_game_filepath(self, game_id: UUID, filename: str) -> Path:
+    def get_game_file(self, game_id: UUID, filename: str) -> Path:
         settings = get_settings()
-        return settings.GAME_PATH / str(game_id) / filename
-
-    def game_file_exists(self, game_id: UUID, filename: str) -> bool:
-        filepath = self.get_game_filepath(game_id, filename)
-        return filepath.exists() and filepath.is_file()
+        filepath = settings.GAME_PATH / str(game_id) / filename
+        if filepath.exists() and filepath.is_file():
+            return filepath
+        raise NotFoundError(f"Game file {filepath}")
 
     def _create_game_files(self, game_dir: Path, template_dir: Path) -> None:
         if not template_dir.exists():
-            raise FileNotFoundError(f"Template game directory not found: {template_dir}.")
+            raise FileNotFoundError()
 
         if game_dir.exists():
             shutil.rmtree(game_dir)

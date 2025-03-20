@@ -19,7 +19,7 @@ class DefaultSettings(BaseSettings):
     DB_POOL_SIZE: int = 15
 
     GOOGLE_APPLICATION_CREDENTIALS: str = ""
-    BEARER_SCHEME: HTTPBearer = HTTPBearer()
+    BEARER_SCHEME: HTTPBearer = HTTPBearer(auto_error=False)
 
     GAME_PATH: Path = Path("games")
     TEMPLATE_PATH: Path = Path(f"{GAME_PATH}/capy-web")
