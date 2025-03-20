@@ -1,5 +1,6 @@
 from typing import Callable
-from fastapi import Response, Request
+
+from fastapi import Request, Response
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import DatabaseError, IntegrityError, OperationalError
 from starlette import status
@@ -28,7 +29,7 @@ class ExceptionMiddleware(BaseHTTPMiddleware):
             return JSONResponse(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"detail": "Database error occured."}
             )
-        except Exception as exc:  #pylint: disable=broad-exception-caught
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             return JSONResponse(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content={"detail": f"Unexpected error occured: {str(exc)}"},
