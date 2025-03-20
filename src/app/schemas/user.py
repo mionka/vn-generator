@@ -1,4 +1,5 @@
 from uuid import UUID
+from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, EmailStr
 
@@ -14,7 +15,7 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(UserBase):
-    pass
+    dt_updated: datetime
 
 
 class UserResponse(UserBase):

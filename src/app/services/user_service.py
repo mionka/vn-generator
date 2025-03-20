@@ -1,4 +1,5 @@
 from typing import Any
+from datetime import datetime
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.models import User
 from app.repositories import UserRepository
 from app.schemas import UserCreate, UserUpdate
-from app.utils import get_session
+from app.utils import NotFoundError, get_session
 
 
 class UserService:
@@ -17,7 +18,10 @@ class UserService:
 
     async def get_user_by_uid(self, uid: str) -> User | None:
         """Fetches user by UID."""
-        return await self.user_repository.get_user_by_uid(uid)
+        user = await self.user_repository.get_user_by_uid(uid)
+        if not user:
+            raise NotFoundError(f"User with uid {uid}")
+        return user
 
     async def sync_user(self, user_info: dict[str, Any]) -> User:
         """
@@ -25,10 +29,10 @@ class UserService:
         If the user exists, updates their info; otherwise, creates a new one.
         """
         uid, email = user_info["uid"], user_info["email"]
-        existing_user = await self.get_user_by_uid(uid)
+        existing_user = await self.user_repository.get_user_by_uid(uid)
 
         if existing_user:
-            update_data = UserUpdate(email=email)
+            update_data = UserUpdate(email=email, dt_updated=datetime.now())
             return await self.user_repository.update_user(existing_user, update_data)
 
         new_user_data = UserCreate(uid=uid, email=email)

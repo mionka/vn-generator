@@ -1,12 +1,12 @@
 from typing import List
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends
 from pydantic import TypeAdapter
 from starlette import status
 
 from app.schemas import GameCreate, GameResponse
 from app.services import GameService
-from app.utils import NotFoundError, get_firebase_user_from_token
+from app.utils import get_firebase_user_from_token
 
 
 api_router = APIRouter(
@@ -41,6 +41,9 @@ async def search_games(
         status.HTTP_401_UNAUTHORIZED: {
             "description": "Could not validate credentials.",
         },
+        status.HTTP_404_NOT_FOUND: {
+            "description": "Requested resource not found.",
+        },
     },
 )
 async def add_game(
@@ -48,16 +51,5 @@ async def add_game(
     current_user: dict = Depends(get_firebase_user_from_token),
     game_service: GameService = Depends(),
 ) -> GameResponse:
-    try:
-        game = await game_service.add_game(game_info, current_user["uid"])
-        return game
-    except NotFoundError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(exc),
-        ) from exc
-    except Exception as exc:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(exc),
-        ) from exc
+    game = await game_service.add_game(game_info, current_user["uid"])
+    return game
